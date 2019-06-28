@@ -1,11 +1,13 @@
 class Image
 
+  attr_reader :image
   def initialize(array)
     @image = array
+    @image_copy = array.dup.map &:dup
   end
 
   def blur_image
-    @image.each_with_index do |row, x|
+    @image_copy.each_with_index do |row, x|
       row.each_with_index do |pixel, y|
         if pixel == 1
         mark_neighbors(x, y)
@@ -14,10 +16,20 @@ class Image
     end
   end
 
+  def blur_distance(distance)
+    distance.times do
+      output_image
+      blur_image
+      @image_copy = @image
+      sleep 1
+    end
+  end
+
   def output_image
     @image.each do |row|
       puts row.join
     end
+    puts
   end
 
   def mark_neighbors(x, y)
@@ -40,17 +52,13 @@ class Image
   end
 end
 
-
 image = Image.new([
-  [0, 0, 0, 0, 0, 0, 0, 1, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0]
+  [0, 0, 0, 0],
+  [0, 0, 0, 0],
+  [0, 0, 0, 0],
+  [0, 1, 0, 0],
+  [0, 0, 0, 0],
+  [0, 0, 0, 0]
 ])
 image.blur_image
-image.output_image
+image.blur_distance 1
